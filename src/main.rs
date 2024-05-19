@@ -5,16 +5,21 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
 async fn main() {
+    // initialize logger tracing
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    // initialize app
     let app = Router::new()
         .route("/", routing::get(root_handler))
         .layer(TraceLayer::new_for_http());
 
+    // initialize listener
     let tcp_listener = TcpListener::bind("127.0.0.1:8888").await.unwrap();
+    tracing::debug!("listening on {}", tcp_listener.local_addr().unwrap());
 
+    // run it
     axum::serve(tcp_listener, app).await.unwrap();
 }
 
