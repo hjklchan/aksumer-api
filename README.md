@@ -8,7 +8,7 @@ cargo install sqlx-cli
 ### Migration
 ```
 # Create the up/down migration files
-sqlx migrate -r create_xxx_table
+sqlx migrate add -r create_xxx_table
 
 sqlx migrate run --database-url=DATABASE_URL
 # Rollback
