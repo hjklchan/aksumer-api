@@ -19,12 +19,12 @@ async fn main() {
     db::init().await;
     tracing::debug!("database connection successful");
 
-    // initialize app
+    // make app
     let app = Router::new()
         .route("/", routing::get(root_handler))
         .layer(TraceLayer::new_for_http());
 
-    // initialize listener
+    // make tcp listener
     let tcp_listener = TcpListener::bind("127.0.0.1:8888").await.unwrap();
     tracing::debug!("listening on {}", tcp_listener.local_addr().unwrap());
 
