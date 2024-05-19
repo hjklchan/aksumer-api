@@ -2,12 +2,13 @@ use crate::handler;
 use axum::response::IntoResponse;
 use axum::{routing, Router};
 
-use crate::AppState;
-
 /// ## App routes
 ///
 /// The call path is `Router -> Handler`
-pub fn with_state<S>(state: AppState) -> Router<S> {
+pub fn with_state<S, AS>(state: AS) -> Router<S>
+where
+    AS: Clone + Send + Sync + 'static,
+{
     Router::new()
         // root
         .route("/", routing::get(root_handler))
