@@ -1,4 +1,4 @@
-use axum::{extract::MatchedPath, http::Request, response::IntoResponse, routing, Router};
+use axum::{response::IntoResponse, routing, Router};
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
