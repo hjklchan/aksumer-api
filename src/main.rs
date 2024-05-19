@@ -1,15 +1,16 @@
 use axum::{response::IntoResponse, routing, Router};
+use dotenvy::dotenv;
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use dotenvy::dotenv;
 
 mod db;
+mod handler;
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    
+
     // initialize logger tracing
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer())
@@ -21,7 +22,10 @@ async fn main() {
 
     // make app
     let app = Router::new()
+        // root
         .route("/", routing::get(root_handler))
+        // login
+        .route("/login", routing::get(handler::user::login_handler))
         .layer(TraceLayer::new_for_http());
 
     // make tcp listener
