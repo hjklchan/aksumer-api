@@ -4,6 +4,8 @@ use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use dotenvy::dotenv;
 
+mod db;
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
@@ -12,6 +14,10 @@ async fn main() {
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer())
         .init();
+
+    // initialize database pool
+    db::init().await.unwrap();
+    tracing::debug!("database connection successful");
 
     // initialize app
     let app = Router::new()
