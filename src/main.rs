@@ -7,6 +7,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
 mod handler;
+mod routes;
 
 /// AppState
 #[derive(Clone)]
@@ -33,12 +34,9 @@ async fn main() {
 
     // make app
     let app = Router::new()
-        // root
-        .route("/", routing::get(root_handler))
-        // login
-        .route("/login", routing::get(handler::user::login_handler))
-        .layer(TraceLayer::new_for_http())
-        .with_state(app_state);
+        // merged routes
+        .merge(routes::with_state(app_state))
+        .layer(TraceLayer::new_for_http());
 
     // make tcp listener
     let tcp_listener = TcpListener::bind("127.0.0.1:8888").await.unwrap();
@@ -46,10 +44,4 @@ async fn main() {
 
     // run it
     axum::serve(tcp_listener, app).await.unwrap();
-}
-
-async fn root_handler() -> impl IntoResponse {
-    tracing::info!("Access to root_handler!");
-
-    "Hello, Askumer-API!"
 }
