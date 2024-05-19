@@ -6,6 +6,7 @@ use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
+mod error;
 mod handler;
 mod routes;
 
