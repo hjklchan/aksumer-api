@@ -16,7 +16,7 @@ async fn main() {
         .init();
 
     // initialize database pool
-    db::init().await.unwrap();
+    db::init().await;
     tracing::debug!("database connection successful");
 
     // initialize app
