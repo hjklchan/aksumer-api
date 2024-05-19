@@ -1,6 +1,6 @@
 use std::env;
 
-use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
+use sqlx::{mysql::MySqlPoolOptions, types::chrono, MySql, Pool};
 
 /// ## Initialize the MySQL database
 /// 
@@ -8,4 +8,19 @@ use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 pub async fn init() -> Pool<MySql> {
     let database_url: String = env::var("DATABASE_URL").unwrap();
     MySqlPoolOptions::new().connect(&database_url).await.unwrap()
+}
+
+/// ## User model
+///
+/// Map to user table
+#[derive(Debug, sqlx::FromRow)]
+pub struct User {
+    pub id: u64,
+    pub username: String,
+    pub avatar_url: String,
+    pub email: String,
+    pub status: i8,
+    pub password: String,
+    pub created_at: chrono::DateTime<chrono::Local>,
+    pub updated_at: chrono::DateTime<chrono::Local>,
 }
