@@ -52,8 +52,9 @@ impl ApiError {
             // Modules error
             // Authenticate related errors
             Self::Authenticate(auth_err) => match auth_err {
-                AuthenticateError::GenerateToken => (StatusCode::UNAUTHORIZED, 20101),
-                AuthenticateError::InvalidToken => (StatusCode::UNAUTHORIZED, 20102),
+                AuthenticateError::IncorrectEmailLogin => (StatusCode::BAD_REQUEST, 20101),
+                AuthenticateError::GenerateToken => (StatusCode::UNAUTHORIZED, 20102),
+                AuthenticateError::InvalidToken => (StatusCode::UNAUTHORIZED, 20103),
                 AuthenticateError::Locked => (StatusCode::LOCKED, 20103),
             },
             // User related errors
@@ -89,6 +90,8 @@ impl IntoResponse for ApiError {
 #[derive(Debug, thiserror::Error)]
 #[error("...")]
 pub enum AuthenticateError {
+    #[error("Incorrect email or password")]
+    IncorrectEmailLogin,
     #[error("Failed to generate access token")]
     GenerateToken,
     #[error("Invalid access token")]

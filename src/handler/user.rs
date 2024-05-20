@@ -1,11 +1,42 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-use crate::error::api_error::{ApiError, OhMyResult, UserError};
+use crate::error::api_error::{ApiError, AuthenticateError, OhMyResult, UserError};
 use crate::AppState;
 
-pub async fn login_handler() -> impl IntoResponse {
-    todo!()
+#[derive(Debug, Deserialize)]
+pub struct LoginReq {
+    email: String,
+    password: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LoginRep {
+    token: String,
+}
+
+pub async fn login_handler(
+    State(AppState { ref dbp }): State<AppState>,
+    Json(payload): Json<LoginReq>,
+) -> OhMyResult<Json<LoginRep>> {
+    let (id, username) = sqlx::query!(
+        "SELECT `id`, `username` FROM `users` WHERE `email` = ? AND `password` = ? LIMIT 1",
+        &payload.email,
+        &payload.password
+    )
+    .fetch_one(dbp)
+    .await
+    .map(|rec| (rec.id, rec.username))
+    .map_err(|err| match err {
+        sqlx::Error::RowNotFound => ApiError::Authenticate(AuthenticateError::IncorrectEmailLogin),
+        other_err => ApiError::Sqlx(other_err),
+    })?;
+
+    // TODO: Generate access token from `id` and `username`
+
+    Ok(Json(LoginRep {
+        token: "xxx".into(),
+    }))
 }
 
 #[derive(Debug, Deserialize)]
@@ -26,7 +57,7 @@ pub async fn create_handler(
     )
     .fetch_one(dbp)
     .await
-    .map(|record| record.exists == 1)
+    .map(|rec| rec.exists == 1)
     .map_err(|err| {
         tracing::error!("an error occurred while creating a user");
         ApiError::Sqlx(err)
