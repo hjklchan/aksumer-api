@@ -1,11 +1,6 @@
-use std::env;
-
-use crate::error::api_error::{ApiError, AuthenticateError, OhMyResult};
-use crate::utils::jwt::{self, Claims, Payload};
+use crate::utils::jwt::Claims;
 use crate::{handler, AppState};
-use axum::extract::Request;
-use axum::middleware::{self, Next};
-use axum::response::{IntoResponse, Response};
+use axum::response::IntoResponse;
 use axum::{routing, Router};
 
 /// ## App routes
