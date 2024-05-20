@@ -19,4 +19,4 @@ thiserror = "1.0.61"
 
 [dependencies.sqlx]
 version = "0.7.4"
-features = ["runtime-tokio-rustls", "mysql", "chrono"]
+features = ["runtime-tokio-native-tls", "mysql", "chrono"]
