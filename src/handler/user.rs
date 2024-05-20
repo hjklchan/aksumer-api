@@ -1,7 +1,9 @@
+use std::env;
 use axum::{extract::State, response::IntoResponse, Json};
 use serde::{Deserialize, Serialize};
 
 use crate::error::api_error::{ApiError, AuthenticateError, OhMyResult, UserError};
+use crate::utils::jwt;
 use crate::AppState;
 
 #[derive(Debug, Deserialize)]
@@ -32,11 +34,16 @@ pub async fn login_handler(
         other_err => ApiError::Sqlx(other_err),
     })?;
 
-    // TODO: Generate access token from `id` and `username`
+    let secret = env::var("AUTH_SECRET").map_err(|_| ApiError::Internal)?;
+    let token = jwt::generate(&secret, jwt::Payload { id, username }).map_err(|err| {
+        tracing::error!(
+            "an error occurred while generating the token, err: {}",
+            err.to_string()
+        );
+        ApiError::Authenticate(AuthenticateError::GenerateToken)
+    })?;
 
-    Ok(Json(LoginRep {
-        token: "xxx".into(),
-    }))
+    Ok(Json(LoginRep { token }))
 }
 
 #[derive(Debug, Deserialize)]
