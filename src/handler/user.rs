@@ -1,6 +1,7 @@
 use axum::{extract::State, response::IntoResponse, Json};
 use serde::Deserialize;
 
+use crate::error::api_error::{ApiError, OhMyResult};
 use crate::AppState;
 
 pub async fn login_handler() -> impl IntoResponse {
@@ -14,11 +15,11 @@ pub struct CreateReq {
     password: String,
 }
 
-pub async fn create(
+pub async fn create_handler(
     State(AppState { ref dbp }): State<AppState>,
     Json(payload): Json<CreateReq>,
-) -> impl IntoResponse {
-    let result = sqlx::query!(
+) -> Result<impl IntoResponse, ApiError> {
+    let new_id = sqlx::query!(
         r#"INSERT INTO `users` ( `username`, `email`, `password`, `created_at`, `updated_at` ) VALUES ( ?, ?, ?, NOW(), NOW() )"#,
         &payload.username,
         &payload.email,
@@ -26,9 +27,8 @@ pub async fn create(
     )
         .execute(dbp)
         .await
-        .unwrap();
+        .map(|result| result.last_insert_id())
+        .map_err(|err| ApiError::Sqlx(err))?;
 
-    result.last_insert_id();
-
-    "created ok"
+    Ok(Json(serde_json::json!({"new_id": new_id})))
 }
