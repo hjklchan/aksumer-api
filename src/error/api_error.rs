@@ -3,6 +3,7 @@ use axum::{http::StatusCode, response::IntoResponse, Json};
 use super::response::Response;
 
 #[derive(Debug, thiserror::Error)]
+#[error("...")]
 pub enum ApiError {
     // Basic error
     #[error("The request processing has failed due to some unknown error")]
