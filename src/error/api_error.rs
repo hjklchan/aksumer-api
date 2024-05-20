@@ -1,4 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse, Json};
+use serde_json::error;
 
 use super::response::Response;
 
@@ -52,10 +53,11 @@ impl ApiError {
             // Modules error
             // Authenticate related errors
             Self::Authenticate(auth_err) => match auth_err {
-                AuthenticateError::IncorrectEmailLogin => (StatusCode::BAD_REQUEST, 20101),
-                AuthenticateError::GenerateToken => (StatusCode::UNAUTHORIZED, 20102),
-                AuthenticateError::InvalidToken => (StatusCode::UNAUTHORIZED, 20103),
-                AuthenticateError::Locked => (StatusCode::LOCKED, 20103),
+                AuthenticateError::MissingToken => (StatusCode::UNAUTHORIZED, 20101),
+                AuthenticateError::InvalidToken => (StatusCode::UNAUTHORIZED, 20102),
+                AuthenticateError::GenerateToken => (StatusCode::UNAUTHORIZED, 20103),
+                AuthenticateError::IncorrectEmailLogin => (StatusCode::BAD_REQUEST, 20104),
+                AuthenticateError::Locked => (StatusCode::LOCKED, 20105),
             },
             // User related errors
             Self::User(user_err) => match user_err {
@@ -96,6 +98,8 @@ pub enum AuthenticateError {
     GenerateToken,
     #[error("Invalid access token")]
     InvalidToken,
+    #[error("Missing access token")]
+    MissingToken,
     #[error("Uer is locked")]
     Locked,
 }
