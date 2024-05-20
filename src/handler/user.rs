@@ -18,7 +18,7 @@ pub struct CreateReq {
 pub async fn create_handler(
     State(AppState { ref dbp }): State<AppState>,
     Json(payload): Json<CreateReq>,
-) -> Result<impl IntoResponse, ApiError> {
+) -> OhMyResult<impl IntoResponse> {
     let new_id = sqlx::query!(
         r#"INSERT INTO `users` ( `username`, `email`, `password`, `created_at`, `updated_at` ) VALUES ( ?, ?, ?, NOW(), NOW() )"#,
         &payload.username,
