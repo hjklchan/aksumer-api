@@ -1,6 +1,6 @@
-use std::env;
 use axum::{extract::State, response::IntoResponse, Json};
 use serde::{Deserialize, Serialize};
+use std::env;
 
 use crate::error::api_error::{ApiError, AuthenticateError, OhMyResult, UserError};
 use crate::utils::jwt;
@@ -17,10 +17,14 @@ pub struct LoginRep {
     token: String,
 }
 
+/// login_handler
+/// 
+/// It's used to login user
 pub async fn login_handler(
     State(AppState { ref dbp }): State<AppState>,
     Json(payload): Json<LoginReq>,
 ) -> OhMyResult<Json<LoginRep>> {
+    // Find user by email and password
     let (id, username) = sqlx::query!(
         "SELECT `id`, `username` FROM `users` WHERE `email` = ? AND `password` = ? LIMIT 1",
         &payload.email,
@@ -30,19 +34,24 @@ pub async fn login_handler(
     .await
     .map(|rec| (rec.id, rec.username))
     .map_err(|err| match err {
+        // If record not found
         sqlx::Error::RowNotFound => ApiError::Authenticate(AuthenticateError::IncorrectEmailLogin),
+        // Other error...
         other_err => ApiError::Sqlx(other_err),
     })?;
 
+    // Get secret and generate token
     let secret = env::var("AUTH_SECRET").map_err(|_| ApiError::Internal)?;
     let token = jwt::generate(&secret, jwt::Payload { id, username }).map_err(|err| {
         tracing::error!(
             "an error occurred while generating the token, err: {}",
             err.to_string()
         );
+
         ApiError::Authenticate(AuthenticateError::GenerateToken)
     })?;
 
+    // Return OK
     Ok(Json(LoginRep { token }))
 }
 
