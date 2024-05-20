@@ -7,8 +7,9 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
 mod error;
-mod handler;
 mod routes;
+mod handler;
+mod utils;
 
 /// AppState
 #[derive(Clone)]
