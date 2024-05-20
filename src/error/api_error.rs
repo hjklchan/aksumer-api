@@ -92,3 +92,5 @@ pub enum UserError {
     UserNotFound,
     // Other errors
 }
+
+pub type OhMyResult<T> = Result<T, ApiError>;
