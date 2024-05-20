@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "SELECT `id`, `username` FROM `users` WHERE `email` = ? AND `password` = ?",
+  "query": "SELECT `id`, `username` FROM `users` WHERE `email` = ? AND `password` = ? LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -32,5 +32,5 @@
       false
     ]
   },
-  "hash": "cf2babbfb6618616ba8978e922c7b85394184799cf9fe86e53bd289655bdd8db"
+  "hash": "328187849d2916cbe594a147de765dcbf9c9787ad10b10c31ad47c66f552811e"
 }
