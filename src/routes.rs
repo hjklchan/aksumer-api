@@ -16,9 +16,9 @@ pub fn with_state<S>(state: AppState) -> Router<S> {
         // root
         .route("/", routing::get(root_handler))
         // login
-        .route("/login", routing::post(handler::user::login_handler))
+        .route("/login", routing::post(handler::users::login_handler))
         // register
-        .route("/register", routing::post(handler::user::create_handler))
+        .route("/register", routing::post(handler::users::create_handler))
         // auth required route
         .route("/auth_required", routing::get(auth_required_handler))
         // state
