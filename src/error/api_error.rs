@@ -48,16 +48,18 @@ impl ApiError {
             Self::MissingParameter(_) => (StatusCode::BAD_GATEWAY, 1004),
             Self::Forbidden(_) => (StatusCode::FORBIDDEN, 1005),
             Self::Sqlx(_) => (StatusCode::INTERNAL_SERVER_ERROR, 1006),
+
             // Modules error
             // Authenticate related errors
             Self::Authenticate(auth_err) => match auth_err {
-                AuthenticateError::GenerateToken => (StatusCode::UNAUTHORIZED, 2001),
-                AuthenticateError::InvalidToken => (StatusCode::UNAUTHORIZED, 2002),
-                AuthenticateError::Locked => (StatusCode::LOCKED, 2003),
+                AuthenticateError::GenerateToken => (StatusCode::UNAUTHORIZED, 20101),
+                AuthenticateError::InvalidToken => (StatusCode::UNAUTHORIZED, 20102),
+                AuthenticateError::Locked => (StatusCode::LOCKED, 20103),
             },
             // User related errors
             Self::User(user_err) => match user_err {
-                UserError::UserNotFound => (StatusCode::NOT_FOUND, 3001),
+                UserError::UserNotFound => (StatusCode::NOT_FOUND, 20201),
+                UserError::EmailAlreadyRegistered(_) => (StatusCode::CONFLICT, 20202),
             },
         }
     }
@@ -101,6 +103,8 @@ pub enum AuthenticateError {
 pub enum UserError {
     #[error("User not found")]
     UserNotFound,
+    #[error("Email `{0}` already registered")]
+    EmailAlreadyRegistered(String),
     // Other errors
 }
 
