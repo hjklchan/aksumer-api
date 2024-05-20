@@ -63,10 +63,20 @@ impl ApiError {
     }
 }
 
+impl Into<String> for ApiError {
+    fn into(self) -> String {
+        self.to_string()
+    }
+}
+
 impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
         let (status_code, err_code) = self.get_codes();
-        Json(Response::<i32>::new(err_code, self.to_string(), None)).into_response()
+        (
+            status_code,
+            Json(Response::<i32>::new(err_code, self.into(), None)),
+        )
+            .into_response()
     }
 }
 
