@@ -27,7 +27,10 @@ pub async fn create_handler(
     .fetch_one(dbp)
     .await
     .map(|record| record.exists == 1)
-    .map_err(|err| ApiError::Sqlx(err))?;
+    .map_err(|err| {
+        tracing::error!("an error occurred while creating a user");
+        ApiError::Sqlx(err)
+    })?;
 
     // If already exist
     if exist {
