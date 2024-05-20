@@ -11,7 +11,8 @@ pub fn with_state<S>(state: AppState) -> Router<S> {
         .route("/", routing::get(root_handler))
         // login
         .route("/login", routing::get(handler::user::login_handler))
-        .route("/users", routing::post(handler::user::create_handler))
+        // register
+        .route("/register", routing::post(handler::user::create_handler))
         .with_state(state)
 }
 
