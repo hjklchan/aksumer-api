@@ -1,5 +1,11 @@
+use std::env;
+
+use crate::error::api_error::{ApiError, AuthenticateError, OhMyResult};
+use crate::utils::jwt::{self, Claims, Payload};
 use crate::{handler, AppState};
-use axum::response::IntoResponse;
+use axum::extract::Request;
+use axum::middleware::{self, Next};
+use axum::response::{IntoResponse, Response};
 use axum::{routing, Router};
 
 /// ## App routes
@@ -13,12 +19,20 @@ pub fn with_state<S>(state: AppState) -> Router<S> {
         .route("/login", routing::post(handler::user::login_handler))
         // register
         .route("/register", routing::post(handler::user::create_handler))
+        // auth required route
+        .route("/auth_required", routing::get(auth_required_handler))
+        // state
         .with_state(state)
 }
 
-// ? Test dbp of AppState
 async fn root_handler() -> impl IntoResponse {
     tracing::info!("Access to root_handler!");
 
     "Hello, Askumer-API!"
+}
+
+// ! Remember to delete below handler
+/// TEST auth required
+async fn auth_required_handler(claims: Claims) -> impl IntoResponse {
+    println!("get user payload: {:#?}", claims.payload);
 }

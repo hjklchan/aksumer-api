@@ -41,8 +41,7 @@ pub async fn login_handler(
     })?;
 
     // Get secret and generate token
-    let secret = env::var("AUTH_SECRET").map_err(|_| ApiError::Internal)?;
-    let token = jwt::generate(&secret, jwt::Payload { id, username }).map_err(|err| {
+    let token = jwt::generate(jwt::Payload { id, username }).map_err(|err| {
         tracing::error!(
             "an error occurred while generating the token, err: {}",
             err.to_string()
