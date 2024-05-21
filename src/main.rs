@@ -1,4 +1,4 @@
-use axum::{response::IntoResponse, routing, Router};
+use axum::Router;
 use dotenvy::dotenv;
 use sqlx::{MySql, Pool};
 use tokio::net::TcpListener;
