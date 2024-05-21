@@ -1,4 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse, Json};
+use serde_json::error;
 
 use super::response::Response;
 
@@ -13,8 +14,11 @@ pub enum ApiError {
     ApiNotFound,
     #[error("Specified signature is not matched with our calculation")]
     UnsupportedHTTPMethod,
+    /// Invalid JSON body
+    #[error("Invalid JSON body")]
+    InvalidJSONBody,
     /// This parameter is indicates what ParameterName is invalid?
-    #[error("The specified parameter {0} value is not valid")]
+    #[error("The specified parameter `{0}` value is not valid")]
     InvalidParameter(String),
     /// This parameter is indicates what ParameterName is missing?
     #[error("The {0} is mandatory for this action")]
@@ -42,12 +46,13 @@ impl ApiError {
     fn get_codes(&self) -> (StatusCode, u16) {
         match self {
             Self::Internal => (StatusCode::INTERNAL_SERVER_ERROR, 10001),
-            Self::ApiNotFound => (StatusCode::NOT_FOUND, 1001),
-            Self::UnsupportedHTTPMethod => (StatusCode::METHOD_NOT_ALLOWED, 1002),
-            Self::InvalidParameter(_) => (StatusCode::BAD_REQUEST, 1003),
-            Self::MissingParameter(_) => (StatusCode::BAD_GATEWAY, 1004),
-            Self::Forbidden(_) => (StatusCode::FORBIDDEN, 1005),
-            Self::Sqlx(_) => (StatusCode::INTERNAL_SERVER_ERROR, 1006),
+            Self::ApiNotFound => (StatusCode::NOT_FOUND, 10002),
+            Self::UnsupportedHTTPMethod => (StatusCode::METHOD_NOT_ALLOWED, 10003),
+            Self::InvalidJSONBody => (StatusCode::BAD_REQUEST, 10004),
+            Self::InvalidParameter(_) => (StatusCode::BAD_REQUEST, 10005),
+            Self::MissingParameter(_) => (StatusCode::BAD_GATEWAY, 10006),
+            Self::Forbidden(_) => (StatusCode::FORBIDDEN, 10007),
+            Self::Sqlx(_) => (StatusCode::INTERNAL_SERVER_ERROR, 10008),
 
             // Modules error
             // Authenticate related errors
