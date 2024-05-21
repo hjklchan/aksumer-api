@@ -3,7 +3,7 @@ use crate::{handler, AppState};
 use axum::response::IntoResponse;
 use axum::{routing, Router};
 
-/// ## App routes
+/// ## App routes *with_state*
 ///
 /// The call path is `Router -> Handler`
 pub fn with_state<S>(state: AppState) -> Router<S> {
@@ -16,6 +16,8 @@ pub fn with_state<S>(state: AppState) -> Router<S> {
         .route("/register", routing::post(handler::users::create_handler))
         // auth required route
         .route("/auth_required", routing::get(auth_required_handler))
+        // handle api not found
+        .fallback(handler::not_found_handler)
         // state
         .with_state(state)
 }
