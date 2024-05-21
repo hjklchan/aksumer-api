@@ -15,7 +15,7 @@ pub fn with_state<S>(state: AppState) -> Router<S> {
         // register
         .route("/register", routing::post(handler::users::create_handler))
         // auth required route
-        .route("/auth_required", routing::get(auth_required_handler))
+        .route("/auth-required", routing::get(auth_required_handler))
         // handle api not found
         .fallback(handler::not_found_handler)
         // state
