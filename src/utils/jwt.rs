@@ -9,11 +9,15 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::api_error::{ApiError, AuthenticateError};
 
+/// A KEYS (Encoding/DecodingKey) which is initialized on the first access
 static KEYS: Lazy<Keys> = Lazy::new(|| {
     let secret = std::env::var("AUTH_SECRET").expect("AUTH_SECRET must be set");
     Keys::new(secret.as_bytes())
 });
 
+/// ## Keys contains (Encoding/Decoding)Key
+/// 
+/// Handling secret from &\[u8\] type
 struct Keys {
     encoding: EncodingKey,
     decoding: DecodingKey,
@@ -28,12 +32,16 @@ impl Keys {
     }
 }
 
+/// ## JWT payload
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Payload {
     pub id: u64,
     pub username: String,
 }
 
+/// JWT Claims
+/// 
+/// The payload is real user info
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub exp: usize,
@@ -50,13 +58,14 @@ where
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         // Extract the token from the authorization header
+        // ? I don't know what the code says here
         let TypedHeader(Authorization(bearer)) = parts
             .extract::<TypedHeader<Authorization<Bearer>>>()
             .await
             .map_err(|_| ApiError::Authenticate(AuthenticateError::MissingToken))?;
         // Decode the user data
         let token_data =
-            jsonwebtoken::decode::<Claims>(bearer.token(), &KEYS.decoding, &Validation::default())
+            jsonwebtoken::decode::<Self>(bearer.token(), &KEYS.decoding, &Validation::default())
                 .map_err(|_| ApiError::Authenticate(AuthenticateError::InvalidToken))?;
 
         Ok(token_data.claims)
