@@ -1,7 +1,7 @@
 use axum::{extract::State, Json};
 use serde::{Serialize, Deserialize};
 
-use crate::{error::api_error::{ApiError, AuthenticateError, OhMyResult}, utils::jwt, AppState, extractor::json_validator::ValidatedJson};
+use crate::{error::api_error::{ApiError, AuthenticateError, OhMyResult}, utils::jwt, AppState};
 
 #[derive(Debug, Deserialize, validator::Validate)]
 pub struct LoginReq {
@@ -21,7 +21,7 @@ pub struct LoginRep {
 /// It's used to login user
 pub async fn login_handler(
     State(AppState { ref dbp }): State<AppState>,
-    ValidatedJson(payload): ValidatedJson<LoginReq>,
+    Json(payload): Json<LoginReq>,
 ) -> OhMyResult<Json<LoginRep>> {
     // Find user by email and password
     let (id, username) = sqlx::query!(

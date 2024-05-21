@@ -1,22 +1,22 @@
 use axum::{extract::State, response::IntoResponse, Json};
 use serde::Deserialize;
 
-use crate::{error::api_error::{ApiError, OhMyResult, UserError}, AppState, extractor::json_validator::ValidatedJson};
+use crate::{error::api_error::{ApiError, OhMyResult, UserError}, AppState};
 
 
 #[derive(Debug, Deserialize, validator::Validate)]
 pub struct CreateReq {
-    #[validate(length(min = 5, max = 12))]
+    #[validate(length(min = 5, max = 12, message = "The username must be between 5 to 12"))]
     username: String,
-    #[validate(email)]
+    #[validate(email(message = "Invalid email address"))]
     email: String,
-    #[validate(length(min = 8, max = 20))]
+    #[validate(length(min = 8, max = 20, message = "The password must be between 8 to 20"))]
     password: String,
 }
 
 pub async fn create_handler(
     State(AppState { ref dbp }): State<AppState>,
-    ValidatedJson(payload): ValidatedJson<CreateReq>,
+    Json(payload): Json<CreateReq>,
 ) -> OhMyResult<impl IntoResponse> {
     // Check if the user exists
     let exist = sqlx::query!(

@@ -24,12 +24,12 @@ where
             .await
             .map_err(|_| ApiError::InvalidJSONBody)?;
 
+        // TODO: validate errors to be improved
         value
             .validate()
             // Get first item(field) in the errors iterator
-            .map_err(|errs| match errs.field_errors().into_iter().next() {
-                Some(value) => ApiError::InvalidParameter(value.0.into()),
-                None => ApiError::InvalidParameter("unknown".into()),
+            .map_err(|_errs| {
+                ApiError::InvalidParameter("unknown".into()) //,
             })?;
 
         Ok(ValidatedJson(value))
