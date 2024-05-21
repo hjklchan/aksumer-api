@@ -7,10 +7,10 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
 mod error;
-mod routes;
-mod handler;
-mod utils;
 mod extractor;
+mod handler;
+mod routes;
+mod utils;
 
 /// AppState
 #[derive(Clone)]

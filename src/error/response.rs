@@ -11,7 +11,7 @@ pub struct Response<T: Serialize> {
 
 impl<T> Response<T>
 where
-    T: Serialize
+    T: Serialize,
 {
     pub fn new(code: u16, message: String, data: Option<T>) -> Self {
         Self {

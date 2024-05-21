@@ -54,7 +54,7 @@ impl ApiError {
             Self::InvalidParameter(_) => (StatusCode::BAD_REQUEST, 10005),
             Self::MissingParameter(_) => (StatusCode::BAD_GATEWAY, 10006),
             Self::Validation(_) => (StatusCode::BAD_REQUEST, 10007),
-            
+
             Self::Forbidden(_) => (StatusCode::FORBIDDEN, 10007),
             Self::Sqlx(_) => (StatusCode::INTERNAL_SERVER_ERROR, 10008),
 
@@ -122,4 +122,3 @@ pub enum UserError {
     EmailAlreadyRegistered(String),
     // Other errors
 }
-

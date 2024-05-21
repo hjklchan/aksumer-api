@@ -21,7 +21,7 @@ static EXPIRE: Lazy<i64> = Lazy::new(|| {
 });
 
 /// ## Keys contains (Encoding/Decoding)Key
-/// 
+///
 /// Handling secret from &\[u8\] type
 struct Keys {
     encoding: EncodingKey,
@@ -45,7 +45,7 @@ pub struct Payload {
 }
 
 /// JWT Claims
-/// 
+///
 /// The payload is real user info
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
