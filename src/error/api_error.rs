@@ -17,8 +17,9 @@ pub enum ApiError {
     /// Invalid JSON body
     #[error("Invalid JSON body")]
     InvalidJSONBody,
-    /// This parameter is indicates what ParameterName is invalid?
-    #[error("The specified parameter `{0}` value is not valid")]
+    /// ! Deprecated#2024/05/21: This parameter is indicates what ParameterName is invalid?
+    /// This parameter is indicates what reason is invalid?
+    #[error("{0}")]
     InvalidParameter(String),
     /// This parameter is indicates what ParameterName is missing?
     #[error("The {0} is mandatory for this action")]
