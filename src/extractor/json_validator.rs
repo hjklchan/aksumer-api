@@ -28,8 +28,11 @@ where
         value
             .validate()
             // Get first item(field) in the errors iterator
-            .map_err(|_errs| {
-                ApiError::InvalidParameter("unknown".into()) //,
+            .map_err(|errs| match errs.field_errors().into_iter().next() {
+                Some((_, valid_errs)) => {
+                    return ApiError::Validation(valid_errs[0].to_owned());
+                }
+                None => ApiError::InvalidJSONBody,
             })?;
 
         Ok(ValidatedJson(value))

@@ -1,10 +1,8 @@
 use axum::{http::StatusCode, response::IntoResponse, Json};
-use serde_json::error;
 
 use super::response::Response;
 
 #[derive(Debug, thiserror::Error)]
-#[error("...")]
 pub enum ApiError {
     // Basic error
     #[error("The request processing has failed due to some unknown error")]
@@ -24,6 +22,9 @@ pub enum ApiError {
     /// This parameter is indicates what ParameterName is missing?
     #[error("The {0} is mandatory for this action")]
     MissingParameter(String),
+    /// Request validation error
+    #[error(transparent)]
+    Validation(#[from] validator::ValidationError),
     /// This parameter is indicates the forbidden reason?
     #[error("{0}")]
     Forbidden(String),
@@ -52,6 +53,8 @@ impl ApiError {
             Self::InvalidJSONBody => (StatusCode::BAD_REQUEST, 10004),
             Self::InvalidParameter(_) => (StatusCode::BAD_REQUEST, 10005),
             Self::MissingParameter(_) => (StatusCode::BAD_GATEWAY, 10006),
+            Self::Validation(_) => (StatusCode::BAD_REQUEST, 10007),
+            
             Self::Forbidden(_) => (StatusCode::FORBIDDEN, 10007),
             Self::Sqlx(_) => (StatusCode::INTERNAL_SERVER_ERROR, 10008),
 
