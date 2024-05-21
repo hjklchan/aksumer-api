@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use axum::{async_trait, extract::FromRequestParts, http::request::Parts, RequestPartsExt};
 use axum_extra::{
     headers::{authorization::Bearer, Authorization},
@@ -13,6 +15,11 @@ use crate::error::api_error::{ApiError, AuthenticateError};
 static KEYS: Lazy<Keys> = Lazy::new(|| {
     let secret = std::env::var("AUTH_SECRET").expect("AUTH_SECRET must be set");
     Keys::new(secret.as_bytes())
+});
+
+static EXPIRE: Lazy<i64> = Lazy::new(|| {
+    let secs = std::env::var("AUTH_EXPIRE").expect("invalid AUTH_EXPIRE");
+    secs.parse().expect("Failed to parse to u64 type")
 });
 
 /// ## Keys contains (Encoding/Decoding)Key
@@ -81,7 +88,7 @@ impl From<Payload> for Claims {
 impl Claims {
     fn new(id: u64, username: String) -> Self {
         Self {
-            exp: (chrono::Local::now() + chrono::Duration::days(30)).timestamp() as usize,
+            exp: (chrono::Local::now() + chrono::Duration::seconds(*EXPIRE)).timestamp() as usize,
             iat: chrono::Local::now().timestamp() as usize,
             payload: Payload { id, username },
         }
