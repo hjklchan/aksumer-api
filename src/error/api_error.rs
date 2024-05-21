@@ -123,4 +123,3 @@ pub enum UserError {
     // Other errors
 }
 
-pub type OhMyResult<T> = Result<T, ApiError>;

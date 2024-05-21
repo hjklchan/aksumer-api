@@ -1,7 +1,14 @@
 use axum::{extract::State, Json};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::{error::api_error::{ApiError, AuthenticateError, OhMyResult}, utils::jwt, AppState};
+use crate::{
+    error::{
+        api_error::{ApiError, AuthenticateError},
+        OhMyResult,
+    },
+    utils::jwt,
+    AppState,
+};
 
 #[derive(Debug, Deserialize, validator::Validate)]
 pub struct LoginReq {
@@ -17,7 +24,7 @@ pub struct LoginRep {
 }
 
 /// login_handler
-/// 
+///
 /// It's used to login user
 pub async fn login_handler(
     State(AppState { ref dbp }): State<AppState>,

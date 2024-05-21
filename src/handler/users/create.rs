@@ -1,8 +1,14 @@
 use axum::{extract::State, response::IntoResponse, Json};
 use serde::Deserialize;
 
-use crate::{error::api_error::{ApiError, OhMyResult, UserError}, extractor::json_validator::ValidatedJson, AppState};
-
+use crate::{
+    error::{
+        api_error::{ApiError, UserError},
+        OhMyResult,
+    },
+    extractor::json_validator::ValidatedJson,
+    AppState,
+};
 
 #[derive(Debug, Deserialize, validator::Validate)]
 pub struct CreateReq {
