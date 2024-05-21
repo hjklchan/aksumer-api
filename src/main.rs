@@ -10,6 +10,7 @@ mod error;
 mod routes;
 mod handler;
 mod utils;
+mod extractor;
 
 /// AppState
 #[derive(Clone)]
