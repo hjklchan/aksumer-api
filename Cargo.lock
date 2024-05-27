@@ -48,6 +48,7 @@ dependencies = [
  "chrono",
  "dotenvy",
  "jsonwebtoken",
+ "lazy_static",
  "once_cell",
  "serde",
  "serde_json",

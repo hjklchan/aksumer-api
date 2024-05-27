@@ -1,10 +1,12 @@
 use axum::Router;
+use config::{Env, ENV};
 use dotenvy::dotenv;
 use sqlx::{MySql, Pool};
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+mod config;
 mod db;
 mod error;
 mod extractor;
@@ -17,6 +19,7 @@ mod utils;
 pub struct AppState {
     // Database connection pool with MySQL
     dbp: Pool<MySql>,
+    cfg: &'static Env
 }
 
 #[tokio::main]
@@ -33,7 +36,7 @@ async fn main() {
     tracing::debug!("database connection successful");
 
     // initialize AppState
-    let app_state: AppState = AppState { dbp };
+    let app_state: AppState = AppState { dbp, cfg: &ENV };
 
     // make app
     let app = Router::new()

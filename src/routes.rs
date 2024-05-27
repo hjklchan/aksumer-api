@@ -1,5 +1,6 @@
 use crate::utils::jwt::Claims;
 use crate::{handler, AppState};
+use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::{routing, Router};
 
@@ -22,8 +23,11 @@ pub fn with_state<S>(state: AppState) -> Router<S> {
         .with_state(state)
 }
 
-async fn root_handler() -> impl IntoResponse {
+async fn root_handler(State(state): State<AppState>) -> impl IntoResponse {
     tracing::info!("Access to root_handler!");
+    let var: &str = &state.cfg.database.0;
+    
+    tracing::info!("{:?}", var);
 
     "Hello, Askumer-API!"
 }

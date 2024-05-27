@@ -27,7 +27,7 @@ pub struct LoginRep {
 ///
 /// It's used to login user
 pub async fn login_handler(
-    State(AppState { ref dbp }): State<AppState>,
+    State(state): State<AppState>,
     Json(payload): Json<LoginReq>,
 ) -> OhMyResult<Json<LoginRep>> {
     // Find user by email and password
@@ -36,7 +36,7 @@ pub async fn login_handler(
         &payload.email,
         &payload.password
     )
-    .fetch_one(dbp)
+    .fetch_one(&state.dbp)
     .await
     .map(|rec| (rec.id, rec.username))
     .map_err(|err| match err {

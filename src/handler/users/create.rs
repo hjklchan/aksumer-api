@@ -21,7 +21,7 @@ pub struct CreateReq {
 }
 
 pub async fn create_handler(
-    State(AppState { ref dbp }): State<AppState>,
+    State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<CreateReq>,
 ) -> OhMyResult<impl IntoResponse> {
     // Check if the user exists
@@ -29,7 +29,7 @@ pub async fn create_handler(
         "SELECT EXISTS ( SELECT 1 FROM `users` WHERE `email` = ? LIMIT 1 ) AS `exists`",
         &payload.email
     )
-    .fetch_one(dbp)
+    .fetch_one(&state.dbp)
     .await
     .map(|rec| rec.exists == 1)
     .map_err(|err| {
@@ -51,7 +51,7 @@ pub async fn create_handler(
         &payload.email,
         &payload.password
     )
-    .execute(dbp)
+    .execute(&state.dbp)
     .await
     .map(|result| result.last_insert_id())
     .map_err(|err| ApiError::Sqlx(err))?;
