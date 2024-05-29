@@ -9,6 +9,7 @@ lazy_static! {
 
 #[derive(Debug, Clone)]
 pub struct Env {
+    pub server: Server,
     pub database: Database,
     pub auth: Auth,
 }
@@ -18,6 +19,7 @@ impl Env {
         dotenv().ok();
 
         Env {
+            server: Server(env::var("SERVER_ADDR").unwrap_or("default".into())),
             // DATABASE_URL default empty
             database: Database(env::var("DATABASE_URL").unwrap_or("".into())),
             auth: Auth {
@@ -30,6 +32,9 @@ impl Env {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct Server(pub String);
 
 #[derive(Debug, Clone)]
 pub struct Database(pub String);

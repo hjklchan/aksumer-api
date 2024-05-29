@@ -2,11 +2,13 @@ use std::env;
 
 use sqlx::{mysql::MySqlPoolOptions, types::chrono, MySql, Pool};
 
+use crate::config;
+
 /// ## Initialize the MySQL database
 ///
 /// return the database pool with MySQL
 pub async fn init() -> Pool<MySql> {
-    let database_url: String = env::var("DATABASE_URL").unwrap();
+    let database_url = &config::ENV.database.0;
     MySqlPoolOptions::new()
         .connect(&database_url)
         .await

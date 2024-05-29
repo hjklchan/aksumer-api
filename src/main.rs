@@ -24,8 +24,6 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
-    dotenv().ok();
-
     // initialize logger tracing
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer())
@@ -45,7 +43,7 @@ async fn main() {
         .layer(TraceLayer::new_for_http());
 
     // make tcp listener
-    let tcp_listener = TcpListener::bind("127.0.0.1:8888").await.unwrap();
+    let tcp_listener = TcpListener::bind(&ENV.server.0).await.unwrap();
     tracing::debug!("listening on {}", tcp_listener.local_addr().unwrap());
 
     // run it
