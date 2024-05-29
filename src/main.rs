@@ -39,7 +39,7 @@ async fn main() {
     // make app
     let app = Router::new()
         // merged routes
-        .merge(routes::with_state(app_state))
+        .merge(routes::new(app_state))
         .layer(TraceLayer::new_for_http());
 
     // make tcp listener

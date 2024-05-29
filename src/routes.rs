@@ -7,7 +7,7 @@ use axum::{routing, Router};
 /// ## App routes *with_state*
 ///
 /// The call path is `Router -> Handler`
-pub fn with_state<S>(state: AppState) -> Router<S> {
+pub fn new<S>(state: AppState) -> Router<S> {
     Router::new()
         // root
         .route("/", routing::get(root_handler))
